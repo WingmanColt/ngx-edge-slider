@@ -50,7 +50,8 @@ import { EdgeSliderModule } from '@your-username/edge-slider';
 })
 export class AppModule { }
 Component HTML: You can use the lib-ngx-edge-slider component in your template. Here's how to initialize it in your Angular component.
-
+html
+Copy code
 <!-- Initialize EdgeSlider component in your template -->
 <lib-ngx-edge-slider *ngIf="sliderConfig.slides?.length"
     [config]="sliderConfig" 
@@ -65,10 +66,9 @@ Component HTML: You can use the lib-ngx-edge-slider component in your template. 
     <!-- 'slide' is our entity, and its properties can be accessed, like slide.id, slide.image -->
     <img [src]="slide.image" alt="Slide image">
 </ng-template>
-
 Component TypeScript: In your component's .ts file, define the sliderConfig with the desired slide settings, and create an onSlideChange handler for capturing slide change events.
 typescript
-
+Copy code
 import { Component } from '@angular/core';
 import { SlideConfig } from '@your-username/edge-slider'; // Import your library
 
@@ -99,6 +99,16 @@ export class YourComponent {
     console.log('Slide changed to: ', event);
   }
 }
+Installation:
+To install the package via npm:
 
+bash
+Copy code
+npm install @your-username/edge-slider
+Once installed, import the module into your Angular application:
+
+typescript
+Copy code
+import { EdgeSliderModule } from '@your-username/edge-slider';
 Summary
 This package provides an easy-to-integrate, flexible Angular component for building interactive and responsive sliders. With options for autoplay, navigation, pagination, and breakpoints, it adapts to various use cases, making it a powerful tool for displaying image galleries, content carousels, and more.
