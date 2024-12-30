@@ -1,3 +1,7 @@
+https://youtu.be/tGZ5qX70KU0
+Live demo: https://hellauto.com -> All sliders works on same code.
+
+
 Edge Slider - A Flexible & Customizable Angular Slider Component
 Edge Slider is a highly flexible and customizable slider component designed for Angular applications. It offers an intuitive interface to manage slides, providing smooth transitions, autoplay functionality, responsive design, and interactive features like draggable slides and configurable navigation. Perfect for creating engaging image galleries, product carousels, content sliders, and more!
 
