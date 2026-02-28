@@ -1,0 +1,46 @@
+﻿<ng-container *ngIf="state$ | async as state">
+  <div
+    class="slider"
+    #sliderHost
+    [class.slider-vertical]="state.vertical"
+    [class.slider-draggable]="state.isDragging"
+    [class.slider--main]="!config.isThumbs"
+    [class.slider--thumbs]="config.isThumbs"
+    *ngIf="state.visibleSlides?.length > 0 && state.isVisible"
+    (pointerdown)="onPointerDown($event)"
+    (pointermove)="onPointerMove($event)"
+    (pointerup)="onPointerUp($event)"
+    (pointercancel)="onPointerUp($event)">
+    <div
+      class="slider__wrapper"
+      [ngStyle]="{
+        transform: state.translate,
+        transition: draggable.isDraggingPointer ? 'none' : 'transform 0.3s ease',
+        display: 'flex',
+        'flex-direction': state.vertical ? 'column' : 'row',
+        'justify-content': state.visibleSlides?.length < state.slidesPerView ? 'center' : 'flex-start',
+        gap: (state.slidesPerView > 1 ? state.gap || 0 : 0) + 'px',
+      }">
+      <div
+        *ngFor="let slide of state.visibleSlides; let i = index"
+        class="slide"
+        [attr.data-index]="i"
+        [class.slide--current]="state.selectedSlide === i"
+        [style.flex]="
+          !config.isThumbs
+            ? '0 0 calc(' +
+              100 / state.slidesPerView +
+              '% - ' +
+              ((state.gap || 0) * (state.slidesPerView - 1)) / state.slidesPerView +
+              'px)'
+            : '0 0 ' + thumbSize + 'px'
+        "
+        [style.width]="config.isThumbs ? thumbSize + 'px' : null"
+        [style.height]="config.isThumbs ? thumbSize + 'px' : null"
+        (click)="engine.selectSlide(i)">
+        <ng-container
+          *ngTemplateOutlet="slideTemplate ? slideTemplate : defaultSlideTemplate; context: { slide: slide, index: i }"></ng-container>
+      </div>
+    </div>
+  </div>
+</ng-container>

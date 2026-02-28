@@ -1,131 +1,653 @@
+# WingmanColt Angular Slider
+
+A modern, fully reactive, plugin‑driven **Angular slider / carousel library** built for **Angular 18+**.
+
+
+Video :
 https://youtu.be/tGZ5qX70KU0
 
-Live demo: https://hellauto.com -> All sliders works on same code.
+Main Slider (3 rendere sliders on homepage):
+https://obscene.me/
 
+Main Slider + Thumb Slider :
+https://obscene.me/shop/product/the-devil
 
-Edge Slider - A Flexible & Customizable Angular Slider Component
-Edge Slider is a highly flexible and customizable slider component designed for Angular applications. It offers an intuitive interface to manage slides, providing smooth transitions, autoplay functionality, responsive design, and interactive features like draggable slides and configurable navigation. Perfect for creating engaging image galleries, product carousels, content sliders, and more!
+WingmanColt is designed for **production‑grade UI systems** where flexibility, performance, and clean architecture matter. It supports **dragging**, **pagination**, **navigation**, **autoplay**, **responsive breakpoints**, and **synced thumbnail sliders**, all powered by a small, predictable core engine.
 
+---
 
-Features:
-Customizable Slide Configurations: Easily control slide behavior, width, autoplay, loop, and more.
-Draggable: Enable users to manually drag slides for a more interactive experience.
-Autoplay: Automatically transition between slides with configurable delay times.
-Slide Navigation & Pagination: Add navigation arrows and pagination dots, with customizable positions.
-Responsive Design: Customize behavior across devices (mobile, tablet, desktop) with breakpoint configurations.
-Vertical/Horizontal Mode: Supports both vertical and horizontal slide orientations with smooth transitions.
-Customizable Titles: Add and position titles for each slide.
-Flexible Navigation: Enable navigation buttons with hover effects.
-Configurable Breakpoints: Tailor slide behavior based on screen size for optimal display on any device.
-SlideConfig Object:
-The SlideConfig object allows you to define various slider settings:
+## ✨ Features
 
+- ✅ Angular **18+** compatible (Standalone components)
+- ⚡ **RxJS‑driven state** (predictable & debuggable)
+- 🧩 **Plugin architecture** (enable only what you need)
+- 🖱️ Pointer‑based dragging (mouse + touch)
+- 📱 Responsive breakpoints (container‑aware)
+- 🧭 Navigation arrows
+- 🔘 Pagination (dots)
+- ▶️ Autoplay (configurable)
+- 🖼️ **Main + Thumbs slider syncing**
+- 📐 Vertical & horizontal modes
+- 🎯 Click‑to‑select slides
+- ♻️ Safe re‑initialization on data changes
 
-title: Optional title for each slide.
-titlePosition: Customize the position of the slide title.
-draggable: Enable/disable draggable functionality.
-slides: An array of slides to display in the slider.
-slidesToSlide: The number of slides to move at once during navigation.
-slideChangeDelay: Time delay (in milliseconds) between slide transitions.
-slidesPerView: Number of slides visible at once.
-slideWidth: Optionally customize the width of each slide.
-changeToClickedSlide: Automatically navigate to the clicked slide.
-autoPlay: Enable automatic slide transitions.
-delay: Time in milliseconds between autoplay transitions.
-loop: Set the number of times to loop the slides (set to 0 for infinite looping).
-vertical: If set to true, slides are displayed vertically.
-navEnabled: Enable navigation arrows.
-navPosition: Set the position of navigation arrows.
-navHoverable: If true, arrows appear only on hover.
-paginationEnabled: Enable pagination dots.
-paginationPosition: Position for pagination dots.
-breakpoints: Define configurations for different screen sizes (mobile, tablet, desktop).
-Responsive Support:
-This component includes responsive settings to ensure optimal performance across devices:
+---
 
+## 📦 Installation
 
-Mobile (mobile): Custom configurations for mobile devices.
-Tablet (tablet): Tailored settings for tablet-sized screens.
-Desktop (desktop): Adjustments for desktop displays.
-Usage Example:
-To integrate the Edge Slider component in your Angular 17+ application, follow these steps:
+```bash
+npm install ngx-edge-slider
+```
 
-1. Import the Module:
-In your app.module.ts (or the module where you want to use the slider), import the EdgeSliderModule:
+> Angular **18 or newer** is required.
 
+---
 
-import { EdgeSliderModule } from '@your-username/edge-slider';
+## 🚀 Quick Start
 
+### 1️⃣ Import the module
 
-@NgModule({
-  imports: [EdgeSliderModule],
-  // other configurations...
-})
-export class AppModule { }
-
-
-2. Component HTML:
-Add the lib-ngx-edge-slider component to your template. Here’s how you can initialize it:
-
-
-<!-- Initialize EdgeSlider component -->
-<lib-ngx-edge-slider *ngIf="sliderConfig.slides?.length"
-    [config]="sliderConfig" 
-    id="EdgeSlider"
-    [slideTemplate]="EdgeSliderTemplate" 
-    (onSlideChange)="onSlideChange($event)">
-</lib-ngx-edge-slider>
-
-
-<!-- Define the slide template -->
-<ng-template #EdgeSliderTemplate let-slide="slide" let-index="currentSlide">
-    <!-- Template rendering logic -->
-    <img [src]="slide.image" alt="Slide image">
-</ng-template>
-
-
-3. Component TypeScript:
-
-In your TypeScript file, define the slider configuration and handle slide change events:
-
-import { Component } from '@angular/core';
-import { SlideConfig } from '@your-username/edge-slider'; // Import your library
-
+```ts
+import { NgxEdgeSliderModule } from "ngx-edge-slider";
 
 @Component({
-  selector: 'app-your-component',
-  templateUrl: './your-component.component.html',
-  styleUrls: ['./your-component.component.css'],
+  standalone: true,
+  imports: [NgxEdgeSliderModule],
 })
+export class AppComponent {}
+```
+
+Or use as standalone
+```ts
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule, NgxEdgeSliderModule],
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
+  encapsulation: ViewEncapsulation.None,
+})
+```
 
 
-export class YourComponent {
+---
+### Import Style
+
+```css
+@import 'ngx-edge-slider/assets/ngx-simple-slider.scss';
+OR
+@import 'ngx-edge-slider/assets/ngx-simple-slider.css';
+
+OR USE CDN
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WingmanColt/ngx-edge-slider@master/projects/ngx-edge-slider/assets/ngx-simple-slider.scss"/>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/WingmanColt/ngx-edge-slider@master/projects/ngx-edge-slider/assets/ngx-simple-slider.css"/>
+
+```
 
 
-  sliderConfig: SlideConfig = new SlideConfig({
-    slides: [
-      { id: 1, image: 'path_to_image_1.jpg' },
-      { id: 2, image: 'path_to_image_2.jpg' },
-      { id: 3, image: 'path_to_image_3.jpg' },
-    ],
-    autoPlay: true,
-    delay: 3000,
-    loop: 0, // Infinite loop
-    slidesToSlide: 1,
-    slidesPerView: 1,
-    navEnabled: true,
-    paginationEnabled: true,
-  });
+---
+
+### 2️⃣ Basic Slider Usage
+
+```html
+<app-simple-slider  #MainSlider [config]="sliderConfig"  [slideTemplate]="mainSlideTemplate" (slideChange)="onSlideChange($event)"></app-simple-slider>
+
+      <ng-template #mainSlideTemplate let-slide="slide" let-index="index">
+        <div class="slide-content">
+          <img [src]="slide.image" alt="Slide {{ index + 1 }}" />
+        </div>
+      </ng-template>
+```
+
+```ts
+sliderConfig: SliderConfig = {
+  slides: this.slides,
+  slidesPerView: 1,
+  plugins: {
+    draggable: true,
+    pagination: true,
+    navigation: true,
+  },
+};
+```
+
+---
+
+## 🧱 Slide Templates
+
+WingmanColt is **template‑driven**. You fully control slide markup.
+
+```html
+<app-simple-slider [config]="sliderConfig" [slideTemplate]="slideTpl"></app-simple-slider>
+
+<ng-template #slideTpl let-slide let-index="index">
+  <img [src]="slide.image" />
+</ng-template>
+```
+
+---
+
+## Full Component with MainSlider, ThumbSlider Pagination, Navigation
 
 
+```html
+<div style="padding: 100px">
+  <ng-container *ngIf="this.slides.length">
+    <div class="slider-container" style="position: relative">
+      <app-simple-slider
+        #MainSlider
+        [config]="sliderConfig"
+        class="slider-main-product"
+        [slideTemplate]="mainSlideTemplate"
+        (slideChange)="onSlideChangeMain($event)"
+      >
+      </app-simple-slider>
 
-  // Handle slide change event
-  onSlideChange(event: any): void {
-    console.log('Slide changed to: ', event);
+      <ng-template #mainSlideTemplate let-slide="slide" let-index="index">
+        <div class="slide-content">
+          <img [src]="slide.image" alt="Slide {{ index + 1 }}" />
+        </div>
+      </ng-template>
+
+      <!-- NAVIGATION -->
+      <div class="slider-nav" [ngClass]="'nav--' + navPosition">
+        <button
+          type="button"
+          class="nav-btn nav-btn--prev"
+          [class.is-hidden]="!(canPrev$ | async)"
+          (click)="onPrevClick($event)"
+          aria-label="Previous"
+        >
+          <
+        </button>
+
+        <button
+          type="button"
+          class="nav-btn nav-btn--next"
+          [class.is-hidden]="!(canNext$ | async)"
+          (click)="onNextClick($event)"
+          aria-label="Next"
+        >
+          >
+        </button>
+      </div>
+      <ng-container *ngIf="pager$ | async as pager">
+        <div class="slider-pagination" *ngIf="pager">
+          <div class="thumb-dots-wrapper">
+            <div
+              *ngFor="let slideIndex of pager.visibleDots; let i = index"
+              (click)="goToSlide(slideIndex)"
+            >
+              <span
+                class="thumb-dot"
+                [class.active]="slideIndex === pager.visibleDots[pager.activeDotIndex]"
+                [class.inactive]="slideIndex !== pager.visibleDots[pager.activeDotIndex]"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <!-- Thumbs Slider -->
+  <ng-container *ngIf="sliderConfigThumbs?.slides?.length">
+    <div class="thumbs-wrapper">
+      <div
+        class="thumb-nav thumb-nav--left"
+        [class.activeArrow]="(thumbsState$ | async)?.canPrev"
+        (click)="ThumbsSlider?.prev()"
+      ></div>
+      <app-simple-slider
+        #ThumbsSlider
+        [config]="sliderConfigThumbs"
+        [slideTemplate]="ThumbsSlideTemplate"
+      ></app-simple-slider>
+
+      <ng-template #ThumbsSlideTemplate let-slide="slide" let-index="index">
+        <div
+          class="slide-content"
+          [class.slide--current]="(thumbsState$ | async)?.selectedSlide === index"
+          (click)="onThumbClick(index)"
+        >
+          <img [src]="slide.image" alt="Slide {{ index + 1 }}" />
+        </div>
+      </ng-template>
+
+      <div
+        class="thumb-nav thumb-nav--right"
+        [class.activeArrow]="(thumbsState$ | async)?.canNext"
+        (click)="ThumbsSlider?.next()"
+      ></div>
+    </div>
+  </ng-container>
+</div>
+
+```
+
+---
+
+---
+
+## Full TS File
+
+```ts
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, ViewChild, ViewEncapsulation } from '@angular/core';
+import {
+  NavPosition,
+  NgxEdgeSliderModule,
+  Pager,
+  SimpleSliderComponent,
+  SliderConfig,
+} from 'ngx-edge-slider';
+import { Observable, take } from 'rxjs';
+
+@Component({
+  selector: 'app-root',
+  imports: [CommonModule, NgxEdgeSliderModule],
+  templateUrl: './app.html',
+  styleUrl: './app.scss',
+  encapsulation: ViewEncapsulation.None,
+})
+export class App implements OnInit {
+  slidesArray = [
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-1/image-1.webp',
+      caption: 'First Slide',
+    },
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-2/image-2.webp',
+      caption: 'Second Slide',
+    },
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-3/image-3.webp',
+      caption: 'Third Slide',
+    },
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-4/image-4.webp',
+      caption: 'Fourth Slide',
+    },
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-3/image-3.webp',
+      caption: 'Third Slide',
+    },
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-1/image-1.webp',
+      caption: 'First Slide',
+    },
+    {
+      image: 'https://obscene.me/assets/images/products/27/image-2/image-2.webp',
+      caption: 'Second Slide',
+    },
+  ];
+
+  private isSyncing = false;
+  slides: any[] = [...this.slidesArray];
+
+  sliderConfig!: SliderConfig;
+  sliderConfigThumbs!: SliderConfig;
+
+  navPosition: NavPosition = 'top-right'; // change this to switch layouts "top-left" | "top-center" | "top-right" | "bottom-left" | "bottom-center" | "bottom-right" | "center-sides";
+
+  @ViewChild('MainSlider') MainSlider!: SimpleSliderComponent;
+  @ViewChild('ThumbsSlider') ThumbsSlider?: SimpleSliderComponent;
+
+  constructor() {}
+
+  ngOnInit(): void {
+    this.sliderConfig = {
+      slides: this.slides,
+      slidesPerView: 1,
+      slidesToSlide: 1,
+      isThumbs: false,
+      plugins: {
+        draggable: true,
+        pagination: true,
+        navigation: true,
+        autoplay: undefined,
+      },
+    };
+
+    this.sliderConfigThumbs = {
+      slides: this.slides,
+      slidesPerView: 4, // desktop default
+      slidesToSlide: 1,
+      isThumbs: true,
+      plugins: {
+        pagination: true, // enable pagination
+        navigation: true, // optional
+        draggable: true, // optional
+        autoplay: undefined,
+      },
+      showOn: { mobile: false, tablet: true, desktop: true },
+      breakpoints: {
+        mobile: { slidesPerView: 0 }, // not used because showOn.mobile=false
+        tablet: { slidesPerView: 4 },
+        desktop: { slidesPerView: 5 },
+      },
+    };
   }
 
+  /** Sync sliders */
+  onSlideChangeMain(index: number) {
+    this.syncSliders(index);
+  }
+  onSlideChangeThumbs(index: number) {
+    this.syncSliders(index);
+  }
+  onThumbClick(index: number) {
+    this.syncSliders(index);
+  }
+
+  private syncSliders(index: number) {
+    if (this.isSyncing) return;
+    this.isSyncing = true;
+
+    this.MainSlider?.goTo(index);
+    this.ThumbsSlider?.goTo(index);
+
+    this.isSyncing = false;
+  }
+
+  // GET SLIDER STATES
+  get mainState$() {
+    return this.MainSlider?.state$;
+  }
+  get thumbsState$() {
+    return this.ThumbsSlider?.state$;
+  }
+
+  // NAVIGATION
+  get canPrev$(): Observable<boolean> | null {
+    if (!this.MainSlider || !this.MainSlider.canPrev$) {
+      console.warn('Navigation plugin is not enabled for this slider.');
+      return null;
+    }
+    return this.MainSlider.canPrev$;
+  }
+
+  get canNext$(): Observable<boolean> | null {
+    if (!this.MainSlider || !this.MainSlider.canNext$) {
+      console.warn('Navigation plugin is not enabled for this slider.');
+      return null;
+    }
+    return this.MainSlider.canNext$;
+  }
+
+  onPrevClick(event?: MouseEvent) {
+    event?.stopPropagation();
+    event?.preventDefault();
+
+    this.MainSlider?.canPrev$?.pipe(take(1)).subscribe((can) => {
+      if (can) this.MainSlider.prev?.();
+    });
+  }
+
+  onNextClick(event?: MouseEvent) {
+    event?.stopPropagation();
+    event?.preventDefault();
+
+    this.MainSlider?.canNext$?.pipe(take(1)).subscribe((can) => {
+      if (can) this.MainSlider.next?.();
+    });
+  }
+
+  // PAGINATION
+  get pager$(): Observable<Pager | null> | null {
+    if (!this.MainSlider?.pager$) {
+      console.warn('Pagination plugin is not enabled for this slider.');
+      return null;
+    }
+    return this.MainSlider.pager$;
+  }
+
+  goToSlide(index: number) {
+    this.MainSlider?.goToSlide?.(index);
+  }
+
+  protected readonly title = signal('slider-test');
 }
 
+```
+----
 
-Summary:
-Edge Slider provides a powerful, easy-to-integrate solution for creating responsive and interactive sliders in Angular applications. With features like autoplay, custom navigation, draggable slides, and responsive configurations, it's ideal for building engaging image galleries, carousels, content sliders, and more.
+## 🔧 SliderConfig Reference
+
+```ts
+export interface SliderConfig {
+  slides: any[];
+  slidesPerView: number;
+  slidesToSlide?: number;
+  loop?: 0 | 1 | 2;
+  vertical?: boolean;
+  changeToClickedSlide?: boolean;
+  isThumbs?: boolean;
+  gap?: number;
+
+  breakpoints?: {
+    mobile?: Partial<SliderConfig>;
+    tablet?: Partial<SliderConfig>;
+    desktop?: Partial<SliderConfig>;
+  };
+
+  plugins?: {
+    draggable?: boolean;
+    autoplay?: { delay?: number };
+    navigation?: boolean;
+    pagination?: boolean;
+  };
+
+  showOn?: {
+    mobile?: boolean;
+    tablet?: boolean;
+    desktop?: boolean;
+  };
+}
+```
+
+---
+
+## 🔌 Plugins
+
+Plugins are **opt‑in**. Only enabled plugins are initialized.
+
+### Draggable
+
+```ts
+plugins: {
+  draggable: true;
+}
+```
+
+- Mouse + touch dragging
+- Pointer capture outside slider bounds
+
+---
+
+### Navigation
+
+```ts
+plugins: {
+  navigation: true;
+}
+```
+
+```html
+<button (click)="slider.prev()">Prev</button>
+<button (click)="slider.next()">Next</button>
+```
+
+Reactive state:
+
+```ts
+slider.canPrev$;
+slider.canNext$;
+```
+
+---
+
+### Pagination
+
+```ts
+plugins: {
+  pagination: true;
+}
+```
+
+```ts
+slider.pager$; // Observable<Pager>
+```
+
+Pager structure:
+
+```ts
+interface Pager {
+  currentPage: number;
+  totalPages: number;
+  visibleDots: number[];
+  activeDotIndex: number;
+}
+```
+
+---
+
+### Autoplay
+
+```ts
+plugins: {
+  autoplay: {
+    delay: 3000;
+  }
+}
+```
+
+- Automatically pauses during dragging
+- Resumes safely
+
+---
+
+## 🖼️ Thumbnails Slider (Main + Thumbs)
+
+WingmanColt supports **fully synced sliders**.
+
+```html
+<app-simple-slider #MainSlider [config]="mainConfig" (slideChange)="onMainChange($event)"></app-simple-slider>
+
+<app-simple-slider #ThumbsSlider [config]="thumbsConfig"></app-simple-slider>
+```
+
+```ts
+onMainChange(index: number) {
+  this.MainSlider.goTo(index);
+  this.ThumbsSlider.goTo(index);
+}
+```
+
+Thumbs config example:
+
+```ts
+thumbsConfig = {
+  slides,
+  slidesPerView: 5,
+  isThumbs: true,
+  plugins: { draggable: true, navigation: true },
+  breakpoints: {
+    tablet: { slidesPerView: 4 },
+    desktop: { slidesPerView: 5 },
+  },
+};
+```
+
+---
+
+## 📐 Responsive Breakpoints
+
+Breakpoints are **container‑aware**, not just viewport‑based.
+
+```ts
+breakpoints: {
+  mobile: { slidesPerView: 1 },
+  tablet: { slidesPerView: 2 },
+  desktop: { slidesPerView: 4 }
+}
+```
+
+Visibility control:
+
+```ts
+showOn: {
+  mobile: false,
+  tablet: true,
+  desktop: true
+}
+```
+
+---
+
+## 🧠 Architecture Overview
+
+- **SliderEngine** – core logic, movement, breakpoints
+- **SliderStore** – RxJS state container
+- **Plugins** – isolated feature modules
+- **SimpleSliderComponent** – UI wrapper
+
+This separation allows:
+
+- Easy feature expansion
+- Predictable state transitions
+- Minimal DOM coupling
+
+---
+
+## ♻️ Lifecycle & Reinitialization
+
+The slider safely re‑initializes when:
+
+- Slides array reference changes
+- Breakpoints change
+- Container size changes
+
+```ts
+this.engine.destroy();
+this.engine.init(newConfig);
+```
+
+---
+
+## 🛠️ Requirements
+
+- Angular **18+**
+- RxJS **7+**
+- Browser support for `ResizeObserver`
+
+---
+
+## 🧪 Status
+
+WingmanColt is **production‑ready**, actively evolving, and designed for real‑world applications.
+
+Planned enhancements:
+
+- ⏩ Loop modes
+- 🎞️ Animation presets
+- ♿ Accessibility helpers
+- 🔄 Virtual slides
+
+---
+
+## 📄 License
+
+MIT
+
+---
+
+## 👤 Author
+
+**WingmanColt**
+Angular & Full‑Stack Engineer
+
+---
+
+If you find this library useful, ⭐️ the repository and feel free to contribute.
