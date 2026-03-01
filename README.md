@@ -12,6 +12,9 @@ https://obscene.me/
 Main Slider + Thumb Slider :
 https://obscene.me/shop/product/the-devil
 
+Stackblitz:
+https://stackblitz.com/edit/angular-rx83vkhm?file=src%2Fmain.ts
+
 WingmanColt is designed for **production‑grade UI systems** where flexibility, performance, and clean architecture matter. It supports **dragging**, **pagination**, **navigation**, **autoplay**, **responsive breakpoints**, and **synced thumbnail sliders**, all powered by a small, predictable core engine.
 
 ---
