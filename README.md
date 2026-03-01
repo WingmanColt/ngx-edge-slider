@@ -2,7 +2,7 @@
 
 A modern, fully reactive, plugin‑driven **Angular slider / carousel library** built for **Angular 18+**.
 
-Main Slider (3 rendere sliders on homepage):
+Main Slider (3 rendered sliders on homepage):
 https://obscene.me/
 
 Main Slider + Thumb Slider :
