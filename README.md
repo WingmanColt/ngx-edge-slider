@@ -119,7 +119,7 @@ sliderConfig: SliderConfig = {
 
 ## 🧱 Slide Templates
 
-WingmanColt is **template‑driven**. You fully control slide markup.
+Slider is **template‑driven**. You fully control slide markup.
 
 ```html
 <app-simple-slider [config]="sliderConfig" [slideTemplate]="slideTpl"></app-simple-slider>
