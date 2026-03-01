@@ -117,7 +117,7 @@ sliderConfig: SliderConfig = {
 
 ---
 
-## 🧱 Slide Templates
+## 🧱 Slider Templates
 
 Slider is **template‑driven**. You fully control slide markup.
 
