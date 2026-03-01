@@ -13,8 +13,6 @@ https://obscene.me/shop/product/the-devil
 Stackblitz:
 https://stackblitz.com/edit/angular-rx83vkhm?file=src%2Fmain.ts
 
-Video :
-https://youtu.be/tGZ5qX70KU0
 
 WingmanColt is designed for **production‑grade UI systems** where flexibility, performance, and clean architecture matter. It supports **dragging**, **pagination**, **navigation**, **autoplay**, **responsive breakpoints**, and **synced thumbnail sliders**, all powered by a small, predictable core engine.
 
