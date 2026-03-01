@@ -134,7 +134,7 @@ Slider is **template‑driven**. You fully control slide markup.
 
 
 ```html
-<div style="padding: 100px">
+
   <ng-container *ngIf="this.slides.length">
     <div class="slider-container" style="position: relative">
       <app-simple-slider
@@ -224,7 +224,7 @@ Slider is **template‑driven**. You fully control slide markup.
       ></div>
     </div>
   </ng-container>
-</div>
+
 
 ```
 
