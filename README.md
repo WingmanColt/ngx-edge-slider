@@ -2,15 +2,17 @@
 
 A modern, fully reactive, plugin‑driven **Angular slider / carousel library** built for **Angular 18+**.
 
-
-Video :
-https://youtu.be/tGZ5qX70KU0
-
-Main Slider (3 rendere sliders on homepage):
+Main Slider (3 rendered sliders on homepage):
 https://obscene.me/
 
 Main Slider + Thumb Slider :
 https://obscene.me/shop/product/the-devil
+
+
+
+Stackblitz:
+https://stackblitz.com/edit/angular-rx83vkhm?file=src%2Fmain.ts
+
 
 WingmanColt is designed for **production‑grade UI systems** where flexibility, performance, and clean architecture matter. It supports **dragging**, **pagination**, **navigation**, **autoplay**, **responsive breakpoints**, and **synced thumbnail sliders**, all powered by a small, predictable core engine.
 
@@ -114,9 +116,9 @@ sliderConfig: SliderConfig = {
 
 ---
 
-## 🧱 Slide Templates
+## 🧱 Slider Templates
 
-WingmanColt is **template‑driven**. You fully control slide markup.
+Slider is **template‑driven**. You fully control slide markup.
 
 ```html
 <app-simple-slider [config]="sliderConfig" [slideTemplate]="slideTpl"></app-simple-slider>
@@ -132,7 +134,7 @@ WingmanColt is **template‑driven**. You fully control slide markup.
 
 
 ```html
-<div style="padding: 100px">
+
   <ng-container *ngIf="this.slides.length">
     <div class="slider-container" style="position: relative">
       <app-simple-slider
@@ -222,7 +224,7 @@ WingmanColt is **template‑driven**. You fully control slide markup.
       ></div>
     </div>
   </ng-container>
-</div>
+
 
 ```
 

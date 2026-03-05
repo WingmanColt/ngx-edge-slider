@@ -1,6 +1,9 @@
 {
   "name": "ngx-edge-slider",
-  "version": "2.2.1",
+  "version": "2.2.5",
+  "description": "A simple slider library for Angular",
+  "author": "WingmanColt",
+  "license": "MIT",
   "peerDependencies": {
     "@angular/common": ">=18.0.0",
     "@angular/core": ">=18.0.0",
