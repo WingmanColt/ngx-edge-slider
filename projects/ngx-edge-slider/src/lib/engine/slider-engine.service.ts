@@ -4,6 +4,7 @@ import { SliderConfig, DEFAULT_CONFIG } from "../models/slider-config.model";
 import { SliderViewState } from "../models/slider-state.model";
 import { SliderPlugin } from "../plugins/slider-plugin";
 import { SliderStore } from "../store/slider-store.service";
+import { SliderAutoplayPlugin } from "../plugins/autoplay/autoplay.plugin";
 
 @Injectable()
 export class SliderEngine {
@@ -19,20 +20,22 @@ export class SliderEngine {
   private ro?: ResizeObserver;
 
   private measuredSlideSizePx?: number;
-
+  private silentJumpTimer: any;
   constructor(private store: SliderStore) {}
 
   /* ---------------- Public API ---------------- */
 
+  // In init() — fix starting position and selectedSlide
   init(config: SliderConfig, plugins: SliderPlugin[] = []) {
     this.config = { ...DEFAULT_CONFIG, ...config, plugins: { ...(config.plugins ?? {}) } };
     this.plugins = plugins;
-
     this.plugins.forEach((p) => p.init?.(this));
-
     this.setupViewportSignals();
     this.applyBreakpoint();
-    this.clampIndicesAfterLayoutChange();
+
+    // Only start at middle clone if loop mode is active
+    const startIndex = this.isLoopMode ? this.loopLength : 0;
+    this.store.update({ currentSlide: startIndex, selectedSlide: 0 }); // ← selectedSlide: 0
     this.recalculate();
   }
 
@@ -49,8 +52,12 @@ export class SliderEngine {
     this.ro.observe(el);
 
     this.measureSlideSize();
+
     // Apply immediately based on real container width
     this.onLayoutSignal();
+
+    // ← notify plugins that container is ready
+    this.plugins.forEach((p) => p.onContainerAttached?.());
   }
   private measureSlideSize() {
     if (!this.containerEl) return;
@@ -78,41 +85,38 @@ export class SliderEngine {
   }
 
   next() {
-    this.goTo(this.store.snapshot.currentSlide + this.slideStep());
+    const next = this.store.snapshot.currentSlide + this.slideStep();
+    this.goToSlide(next);
     this.plugins.forEach((p) => p.onNext?.());
+    if (this.isLoopMode) this.scheduleLoopReset(); // ← guarded
   }
 
   previous() {
-    this.goTo(this.store.snapshot.currentSlide - this.slideStep());
+    const prev = this.store.snapshot.currentSlide - this.slideStep();
+    this.goToSlide(prev);
     this.plugins.forEach((p) => p.onPrevious?.());
+    if (this.isLoopMode) this.scheduleLoopReset(); // ← guarded
   }
+
   public getContainerEl(): HTMLElement | undefined {
     return this.containerEl;
   }
   selectSlide(index: number) {
     const slidesPerView = this.store.snapshot.slidesPerView;
 
-    // 1️⃣ Mark selected
-    this.store.update({ selectedSlide: index });
+    // Map looped index back to real index
+    const len = this.loopLength;
+    const realIndex = len > 0 ? ((index % len) + len) % len : index;
 
-    // 2️⃣ Calculate page start
+    this.store.update({ selectedSlide: realIndex }); // ← use realIndex, not raw loop index
+
     let pageStart = Math.floor(index / slidesPerView) * slidesPerView;
-
-    // 3️⃣ Clamp to maxStartIndex
     pageStart = Math.min(pageStart, this.maxStartIndex);
 
-    // 4️⃣ If synced with thumbs, also clamp to their max index
-    if (this.syncThumbsEngine) {
-      const thumbMaxIndex = this.syncThumbsEngine.getMaxStartIndex();
-      pageStart = Math.min(pageStart, thumbMaxIndex);
-    }
-
-    // 5️⃣ Move main slider
     if (pageStart !== this.store.snapshot.currentSlide) {
       this.goToSlide(pageStart);
     }
 
-    // 6️⃣ Notify plugins
     this.plugins.forEach((p) => p.onSlideClick?.(index));
   }
 
@@ -146,9 +150,40 @@ export class SliderEngine {
     this.plugins.forEach((p) => p.onSlideClick?.(index));
   }
 
+  // Guard scheduleLoopReset and normalizeLoopPosition
+  private scheduleLoopReset() {
+    if (!this.isLoopMode) return; // ← add this
+    clearTimeout(this.silentJumpTimer);
+    this.silentJumpTimer = setTimeout(() => this.normalizeLoopPosition(), 520);
+  }
+
+  private normalizeLoopPosition() {
+    const len = this.loopLength;
+    if (len === 0) return;
+    const current = this.store.snapshot.currentSlide;
+
+    let normalized: number | null = null;
+
+    if (current >= len * 2) {
+      // Went past the 3rd copy — jump back to 2nd copy (middle)
+      normalized = len + ((current - len) % len);
+    } else if (current < len) {
+      // Went before the 1st copy — jump forward to 2nd copy (middle)
+      normalized = len + (((current % len) + len) % len);
+    }
+
+    if (normalized !== null) {
+      this.store.update({ silentJump: true, currentSlide: normalized });
+      this.recalculate();
+      requestAnimationFrame(() => {
+        this.store.update({ silentJump: false });
+      });
+    }
+  }
+
   public recalculate() {
-    if (this.store.snapshot.isDragging) return; // skip during drag
-    const slides = this.config.slides ?? [];
+    if (this.store.snapshot.isDragging) return;
+    const slides = this.loopedSlides;
     const maxStartIndex = this.getMaxStartIndex();
     const current = this.store.snapshot.currentSlide;
 
@@ -157,8 +192,8 @@ export class SliderEngine {
       translate: this.translate(current),
       pager: this.buildPager(),
       maxStartIndex,
-      canPrev: current > 0,
-      canNext: current < maxStartIndex,
+      canPrev: this.isLoopMode ? true : current > 0, // ← fix
+      canNext: this.isLoopMode ? true : current < maxStartIndex, // ← fix
     });
   }
 
@@ -247,12 +282,16 @@ export class SliderEngine {
       device = "desktop";
     }
 
-    // Merge overrides
-    this.config = { ...this.config, ...override };
+    // Merge overrides deeply to preserve showOn
+    this.config = {
+      ...this.config,
+      ...override,
+      showOn: { ...this.config.showOn, ...override?.showOn },
+    };
 
     this.store.update({
       slidesPerView: this.config.slidesPerView,
-      gap: this.config.gap ?? 0, // ✅ NEW
+      gap: this.config.gap ?? 0,
       isVisible: this.config.showOn?.[device] ?? true,
     });
   }
@@ -272,43 +311,42 @@ export class SliderEngine {
     });
   }
 
+  // Update buildPager to use original slides for dot count
   private buildPager() {
-    const totalSlides = this.config.slides.length;
-    const currentSlide = this.store.snapshot.selectedSlide !== -1 ? this.store.snapshot.selectedSlide : this.store.snapshot.currentSlide;
+    const totalSlides = this.originalSlides.length;
+    const len = this.loopLength;
+
+    // When not in loop mode, use currentSlide directly
+    const raw = this.store.snapshot.selectedSlide !== -1 ? this.store.snapshot.selectedSlide : this.store.snapshot.currentSlide;
+
+    const currentSlide = len > 0 ? (((raw - len) % len) + len) % len : Math.min(raw, totalSlides - 1); // ← no modulo when not looping
 
     const maxVisibleDots = 5;
-
     let start = Math.max(0, currentSlide - Math.floor(maxVisibleDots / 2));
     let end = start + maxVisibleDots;
-
     if (end > totalSlides) {
       end = totalSlides;
       start = Math.max(0, end - maxVisibleDots);
     }
 
     const visibleDots = Array.from({ length: end - start }, (_, i) => start + i);
-    const activeDotIndex = visibleDots.indexOf(currentSlide);
-
     return {
       currentPage: currentSlide,
       totalPages: totalSlides,
       visibleDots,
-      activeDotIndex,
+      activeDotIndex: visibleDots.indexOf(currentSlide),
     };
   }
-
   private slideStep() {
     return this.store.snapshot.slidesPerView;
   }
 
   private get maxStartIndex() {
-    const total = this.config.slides?.length ?? 0;
-    return Math.max(0, total - this.store.snapshot.slidesPerView);
+    return Math.max(0, this.loopedSlides.length - this.store.snapshot.slidesPerView);
   }
   getMaxStartIndex() {
-    const total = this.config.slides?.length ?? 0;
     const spv = this.store.snapshot.slidesPerView || 1;
-    return Math.max(0, total - spv);
+    return Math.max(0, this.loopedSlides.length - spv);
   }
   /* -------- Plugin-safe API -------- */
 
@@ -345,5 +383,20 @@ export class SliderEngine {
 
   getSelectedSlide(): number {
     return this.store.snapshot.selectedSlide;
+  }
+
+  // Helpers
+  private get isLoopMode(): boolean {
+    return !!(this.config.loop || this.plugins.some((p) => p instanceof SliderAutoplayPlugin));
+  }
+  private get originalSlides() {
+    return this.config.slides ?? [];
+  }
+  private get loopedSlides() {
+    const s = this.originalSlides;
+    return this.isLoopMode ? [...s, ...s, ...s] : [...s];
+  }
+  private get loopLength() {
+    return this.isLoopMode ? this.originalSlides.length : 0;
   }
 }

@@ -8,6 +8,7 @@ export interface Pager {
 
 export interface SliderPlugin {
   init?(engine: SliderEngine): void;
+  onContainerAttached?(): void;
   destroy?(): void;
 
   onNext?(): void;

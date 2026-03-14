@@ -15,7 +15,8 @@
       class="slider__wrapper"
       [ngStyle]="{
         transform: state.translate,
-        transition: draggable.isDraggingPointer ? 'none' : 'transform 0.3s ease',
+        transition: state.isDragging || state.silentJump ? 'none' : 'transform 0.5s cubic-bezier(0.4, 0.0, 0.2, 1)',
+
         display: 'flex',
         'flex-direction': state.vertical ? 'column' : 'row',
         'justify-content': state.visibleSlides?.length < state.slidesPerView ? 'center' : 'flex-start',

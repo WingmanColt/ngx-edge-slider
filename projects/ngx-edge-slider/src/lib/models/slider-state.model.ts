@@ -24,6 +24,7 @@ export interface SliderViewState {
   isAnimating?: boolean;
   isVisible?: boolean;
   isDragging?: boolean;
+  silentJump?: boolean;
 }
 
 export const INITIAL_SLIDER_STATE: SliderViewState = {
@@ -45,4 +46,5 @@ export const INITIAL_SLIDER_STATE: SliderViewState = {
   isAnimating: false,
   isVisible: false,
   isDragging: false,
+  silentJump: false,
 };

@@ -123,7 +123,8 @@ $main-height: 520px; // main slider height
   height: 100%;
   overflow: hidden;
   position: relative;
-  touch-action: none; // 🔥 slider owns the gesture
+  touch-action: pan-y; // ← allow vertical scroll by default
+
   cursor: grab;
   user-select: none;
   -webkit-user-drag: none;
@@ -131,6 +132,7 @@ $main-height: 520px; // main slider height
 
   &.slider-can-drag {
     cursor: grab;
+    touch-action: none; // ← only block all touch when draggable and has slides
   }
 
   &.slider-is-dragging {
@@ -282,7 +284,7 @@ $main-height: 520px; // main slider height
 
 .slider-container {
   position: relative;
-  z-index: 10; // base container
+  z-index: 2; // base container
 
   .slider {
     position: relative;

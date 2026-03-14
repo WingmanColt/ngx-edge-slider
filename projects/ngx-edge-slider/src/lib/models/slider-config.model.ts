@@ -1,9 +1,8 @@
-export interface AutoplayPluginConfig {
-  delay?: number;
-}
+import { AutoplayPluginConfig } from "../plugins/autoplay/autoplay-config.model";
+
 export interface SliderPluginConfig {
   draggable?: boolean;
-  autoplay?: { delay?: number };
+  autoplay?: AutoplayPluginConfig | false;
   navigation?: boolean;
   pagination?: boolean;
 }

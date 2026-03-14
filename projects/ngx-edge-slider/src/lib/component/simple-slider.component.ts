@@ -19,12 +19,12 @@ import { Observable, Subject, takeUntil } from "rxjs";
 import { SliderConfig } from "../models/slider-config.model";
 import { SliderEngine } from "../engine/slider-engine.service";
 import { SliderStore } from "../store/slider-store.service";
-import { SliderAutoplayPlugin } from "../plugins/autoplay/autoplay.plugin";
 import { SliderDraggablePlugin } from "../plugins/draggable/draggable.plugin";
 import { SliderNavigationPlugin } from "../plugins/navigation/navigation.plugin";
 import { SliderPaginationPlugin } from "../plugins/pagination/pagination.plugin";
 import { Pager, SliderPlugin } from "../plugins/slider-plugin";
 import { CommonModule } from "@angular/common";
+import { SliderAutoplayPlugin } from "../plugins/autoplay/autoplay.plugin";
 
 @Component({
   selector: "app-simple-slider",
@@ -43,6 +43,7 @@ export class SimpleSliderComponent implements OnInit, AfterViewInit, OnChanges, 
   @Input() paginationTemplate?: TemplateRef<any>;
   @Output() slideChange = new EventEmitter<number>();
 
+  private initialized = false;
   private isDraggingPointer = false;
   private dragStartX = 0;
   private dragStartY = 0;
@@ -73,6 +74,7 @@ export class SimpleSliderComponent implements OnInit, AfterViewInit, OnChanges, 
     });
     this.lastSlidesRef = this.config?.slides ?? null;
     this.resolvePlugins(this.config);
+    this.initialized = true; // ← mark after first resolvePlugins
   }
   ngAfterViewInit() {
     if (this.sliderHost?.nativeElement) {
@@ -82,6 +84,7 @@ export class SimpleSliderComponent implements OnInit, AfterViewInit, OnChanges, 
 
   ngOnChanges(changes: SimpleChanges) {
     if (!changes["config"] || !this.config) return;
+    if (!this.initialized) return; // ← skip the pre-ngOnInit call; ngOnInit handles it
 
     const newSlidesRef = this.config.slides ?? null;
 
@@ -222,14 +225,14 @@ export class SimpleSliderComponent implements OnInit, AfterViewInit, OnChanges, 
     if (cfg.draggable) runtimePlugins.push(this.draggable);
     if (cfg.pagination) runtimePlugins.push(this.pagination);
     if (cfg.navigation) runtimePlugins.push(this.navigation);
-
-    if (cfg.autoplay) {
-      this.autoplay.setConfig(cfg.autoplay);
-      runtimePlugins.push(this.autoplay);
-    }
+    if (cfg.autoplay) runtimePlugins.push(this.autoplay); // ← add BEFORE init, no setConfig yet
 
     this.engine.init({ ...config, plugins: undefined }, runtimePlugins);
 
+    // ← call setConfig AFTER engine.init so this.engine is set inside the plugin
+    if (cfg.autoplay) {
+      this.autoplay.setConfig(cfg.autoplay);
+    }
     if (cfg.navigation) {
       setTimeout(() => this.navigation?.updateArrows?.());
     }
