@@ -1,0 +1,11 @@
+.slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  background-color: #eee;
+  border: 1px solid #ccc;
+  font-size: 24px;
+}
+
+@import 'ngx-edge-slider/assets/ngx-simple-slider';

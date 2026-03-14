@@ -1,0 +1,91 @@
+<div style="padding: 100px">
+  <ng-container *ngIf="this.slides.length">
+    <div class="slider-container" style="position: relative">
+      <app-simple-slider
+        #MainSlider
+        [config]="sliderConfig"
+        class="slider-main-product"
+        [slideTemplate]="mainSlideTemplate"
+        (slideChange)="onSlideChangeMain($event)"
+      >
+      </app-simple-slider>
+
+      <ng-template #mainSlideTemplate let-slide="slide" let-index="index">
+        <div class="slide-content">
+          <img [src]="slide.image" alt="Slide {{ index + 1 }}" />
+        </div>
+      </ng-template>
+
+      <!-- NAVIGATION -->
+      <div class="slider-nav" [ngClass]="'nav--' + navPosition">
+        <button
+          type="button"
+          class="nav-btn nav-btn--prev"
+          [class.is-hidden]="!(canPrev$ | async)"
+          (click)="onPrevClick($event)"
+          aria-label="Previous"
+        >
+          <
+        </button>
+
+        <button
+          type="button"
+          class="nav-btn nav-btn--next"
+          [class.is-hidden]="!(canNext$ | async)"
+          (click)="onNextClick($event)"
+          aria-label="Next"
+        >
+          >
+        </button>
+      </div>
+      <ng-container *ngIf="pager$ | async as pager">
+        <div class="slider-pagination" *ngIf="pager">
+          <div class="thumb-dots-wrapper">
+            <div
+              *ngFor="let slideIndex of pager.visibleDots; let i = index"
+              (click)="goToSlide(slideIndex)"
+            >
+              <span
+                class="thumb-dot"
+                [class.active]="slideIndex === pager.visibleDots[pager.activeDotIndex]"
+                [class.inactive]="slideIndex !== pager.visibleDots[pager.activeDotIndex]"
+              ></span>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
+
+  <!-- Thumbs Slider -->
+  <ng-container *ngIf="sliderConfigThumbs?.slides?.length">
+    <div class="thumbs-wrapper">
+      <div
+        class="thumb-nav thumb-nav--left"
+        [class.activeArrow]="(thumbsState$ | async)?.canPrev"
+        (click)="ThumbsSlider?.prev()"
+      ></div>
+      <app-simple-slider
+        #ThumbsSlider
+        [config]="sliderConfigThumbs"
+        [slideTemplate]="ThumbsSlideTemplate"
+      ></app-simple-slider>
+
+      <ng-template #ThumbsSlideTemplate let-slide="slide" let-index="index">
+        <div
+          class="slide-content"
+          [class.slide--current]="(thumbsState$ | async)?.selectedSlide === index"
+          (click)="onThumbClick(index)"
+        >
+          <img [src]="slide.image" alt="Slide {{ index + 1 }}" />
+        </div>
+      </ng-template>
+
+      <div
+        class="thumb-nav thumb-nav--right"
+        [class.activeArrow]="(thumbsState$ | async)?.canNext"
+        (click)="ThumbsSlider?.next()"
+      ></div>
+    </div>
+  </ng-container>
+</div>
